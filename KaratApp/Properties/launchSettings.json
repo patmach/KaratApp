@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "KaratApp": {
+      "commandName": "Project",
+      "commandLineArgs": "10 2a02:598:a::79:222 2606:4700:20::ac43:61b2 2606:40:20::ac43:61b4 "
+    }
+  }
+}

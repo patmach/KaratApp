@@ -30,39 +30,39 @@ namespace KaratApp
             
         }
 
-        public Task RunTests()
+        public void RunTests()
         {
-            if (ipAddress == null) 
-                return Task.CompletedTask;
+            if (ipAddress == null)
+                return;
             start = DateTime.Now;
-            Ping pingSender = new Ping();
-            timer.Elapsed += async (sender, e) => await Test(pingSender);
+            timer.Elapsed += async (sender, e) => await Test();
             timer.Start();
             stopTimerResetEvent.WaitOne();
             stopTimerResetEvent.Close();
             timer.Stop();
-            return Task.CompletedTask;
+            return;
         }
 
 
-        private Task Test(Ping pingSender)
+        private Task Test()
         {
             if (DateTime.Now > start.AddSeconds(testTimeInSeconds))
                 stopTimerResetEvent.Set();
             else
-                Ping(pingSender);
+                PingIPAddress();
             return Task.CompletedTask;
 
         }
 
-        private void Ping(Ping pingSender)
+        private void PingIPAddress()
         {
             var lastteststart = DateTime.Now;
             bool success = false;
+            Ping pingSender = new Ping();
             PingReply reply = pingSender.Send(ipAddress, timeoutInMiliseconds);
             if (reply.Status == IPStatus.Success)
                 success = true;
-
+            Console.WriteLine($"{DateTime.Now.ToString("hh.mm.ss.ffffff")}.....{ipAddress}: {success}");
         }
     }
 }
