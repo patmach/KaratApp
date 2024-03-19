@@ -6,17 +6,21 @@ using System.Threading.Tasks;
 using System.Net;
 using System.Net.NetworkInformation;
 using System.Threading;
+using System.Runtime.CompilerServices;
+using System.Timers;
 
 namespace KaratApp
 {
 
     internal class IPTest
     {
+        private ManualResetEvent stopTimerResetEvent = new ManualResetEvent(false);
         public static int testTimeInSeconds;
         private static readonly int periodInMiliseconds = 100;
-        private static readonly int timeoutInMiliseconds = 60;
+        private static readonly int timeoutInMiliseconds = 300;
         private DateTime start;
         private readonly IPAddress ipAddress;
+        private System.Timers.Timer timer = new System.Timers.Timer(periodInMiliseconds);
 
         public IPTest(string ipAddress)
         {
@@ -26,17 +30,39 @@ namespace KaratApp
             
         }
 
-        public void RunTest()
+        public Task RunTests()
         {
-            if (ipAddress == null) return;
+            if (ipAddress == null) 
+                return Task.CompletedTask;
             start = DateTime.Now;
             Ping pingSender = new Ping();
-            while (DateTime.Now > start.AddSeconds(60))
-            {
-                bool success = false;
-                PingReply reply = pingSender.Send(ipAddress, timeoutInMiliseconds);
-                if (reply.Status == IPStatus.Success)
-                    success = true;
+            timer.Elapsed += async (sender, e) => await Test(pingSender);
+            timer.Start();
+            stopTimerResetEvent.WaitOne();
+            stopTimerResetEvent.Close();
+            timer.Stop();
+            return Task.CompletedTask;
+        }
+
+
+        private Task Test(Ping pingSender)
+        {
+            if (DateTime.Now > start.AddSeconds(testTimeInSeconds))
+                stopTimerResetEvent.Set();
+            else
+                Ping(pingSender);
+            return Task.CompletedTask;
+
+        }
+
+        private void Ping(Ping pingSender)
+        {
+            var lastteststart = DateTime.Now;
+            bool success = false;
+            PingReply reply = pingSender.Send(ipAddress, timeoutInMiliseconds);
+            if (reply.Status == IPStatus.Success)
+                success = true;
+
         }
     }
 }
