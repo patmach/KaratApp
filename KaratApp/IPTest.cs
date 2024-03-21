@@ -12,9 +12,9 @@ using System.Timers;
 namespace KaratApp
 {
 
-    internal class IPTest
+    internal sealed class IPTest
     {
-        private ManualResetEvent stopTimerResetEvent = new ManualResetEvent(false);
+        private ManualResetEventSlim stopTimerResetEvent = new ManualResetEventSlim(false);
         public static int testTimeInSeconds;
         private static readonly int periodInMiliseconds = 100;
         private static readonly int timeoutInMiliseconds = 300;
@@ -22,7 +22,7 @@ namespace KaratApp
         private readonly IPAddress ipAddress;
         private System.Timers.Timer timer = new System.Timers.Timer(periodInMiliseconds);
 
-        public IPTest(string ipAddress)
+        internal IPTest(string ipAddress)
         {
             bool parsed = IPAddress.TryParse(ipAddress, out this.ipAddress);
             if (!parsed)
@@ -37,8 +37,8 @@ namespace KaratApp
             start = DateTime.Now;
             timer.Elapsed += async (sender, e) => await Test();
             timer.Start();
-            stopTimerResetEvent.WaitOne();
-            stopTimerResetEvent.Close();
+            stopTimerResetEvent.Wait();
+            stopTimerResetEvent.Dispose();
             timer.Stop();
             return;
         }
@@ -56,7 +56,6 @@ namespace KaratApp
 
         private void PingIPAddress()
         {
-            var lastteststart = DateTime.Now;
             bool success = false;
             Ping pingSender = new Ping();
             PingReply reply = pingSender.Send(ipAddress, timeoutInMiliseconds);

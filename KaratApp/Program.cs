@@ -19,8 +19,7 @@ if (!int.TryParse(args[0], out timeout))
     Console.WriteLine(usageMessage);
     return;
 }
+TestResultsXMLFileSerializer.StartXMLWriteTask(args[1..]);
 IPTestOrchestrator.CreateAndRunIPTests(timeout, args[1..]);
-Console.WriteLine("Press any key to finish");
-Console.ReadLine();
 
 
