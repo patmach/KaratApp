@@ -6,9 +6,20 @@ using System.Threading.Tasks;
 
 namespace KaratApp
 {
+    /// <summary>
+    /// Struct representing statistics of tests
+    /// </summary>
     internal struct AvailaibilityStat
     {
-        internal int successfulTests;
+        /// <summary>
+        /// Number of tests
+        /// </summary>
         internal int tests;
+
+
+        /// <summary>
+        /// Number of tests that has been successful
+        /// </summary>
+        internal int successfulTests;
     }
 }

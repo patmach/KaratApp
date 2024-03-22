@@ -8,18 +8,33 @@ using System.Xml;
 
 namespace KaratApp
 {
+    /// <summary>
+    /// Class contianing method that retrieves IP address tests statistics and print them
+    /// </summary>
     internal sealed class AvailabilityStatsRetriever
     {
-        
-        private static Dictionary<string, AvailaibilityStat> IPAddressAvailaibiltyDict = new Dictionary<string, AvailaibilityStat>();
+        /// <summary>
+        /// Dictionary containing stats for each IP address
+        /// </summary>
+        private static Dictionary<string, AvailaibilityStat> IPAddressAvailaibiltyDict = 
+            new Dictionary<string, AvailaibilityStat>();
 
+        /// <summary>
+        /// The main method that will perform all steps of retrieval and printing
+        /// </summary>
+        /// <param name="ipAddresses">IP addresses whose stats should be retrieved</param>
+        /// <param name="pathToXMLFile">Path to XML file with results of the IP address tests</param>
         public static void RetrieveAndPrint(string[] ipAddresses, string pathToXMLFile)
         {
             CreateDictionary(ipAddresses);
-            ComputeFromXMLFile(pathToXMLFile);
+            RetrieveFromXMLFile(pathToXMLFile);
             Print();
         }
 
+        /// <summary>
+        /// Fill Dictionary with all IP addreses as keys and default Stat
+        /// </summary>
+        /// <param name="ipAddresses">IP addresses used as keys of the dictionary</param>
         private static void CreateDictionary(string[] ipAddresses)
         {
             foreach (var ipAddress in ipAddresses)
@@ -27,17 +42,21 @@ namespace KaratApp
                 IPAddressAvailaibiltyDict.Add(ipAddress, 
                     new AvailaibilityStat
                     { 
-                        successfulTests =0,
-                        tests =0
+                        successfulTests = 0,
+                        tests = 0
                     });
             }
         }
 
-        private static Dictionary<string, AvailaibilityStat> ComputeFromXMLFile(string path)
+        /// <summary>
+        /// Retrieves number of IP address tests and number of successful tests
+        /// </summary>
+        /// <param name="pathToXMLFile">Path to XML file with results of the IP address tests</param>
+        private static void RetrieveFromXMLFile(string pathToXMLFile)
         {
-            using(XmlReader reader  = XmlReader.Create(path))
+            try
             {
-                try
+                using (XmlReader reader = XmlReader.Create(pathToXMLFile))
                 {
                     while (reader.ReadToFollowing(nameof(IPAddressTest)))
                     {
@@ -61,14 +80,17 @@ namespace KaratApp
                         }
                     }
                 }
-                catch(Exception ex)
-                {
-                    var debug = 1;
-                }
             }
-            return IPAddressAvailaibiltyDict;
+            catch (XmlException ex)
+            {
+                Console.WriteLine("Processing of XML file with results of the tests was unsuccessful.");
+                Environment.Exit(1);
+            }
         }
 
+        /// <summary>
+        /// For each IP address computes percent of availability and prints it 
+        /// </summary>
         private static void Print()
         {
             foreach (var ipAddress in IPAddressAvailaibiltyDict.Keys)
