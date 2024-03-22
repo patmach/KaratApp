@@ -24,7 +24,7 @@ if (!int.TryParse(args[0], out timeout))
 string[] ipAddresses = args[1..].Distinct().ToArray();
 
 //Run IP address tests and write of their results
-Task writeTask =TestResultsXMLFileWriter.StartXMLWriteTask(timeout);
+Task writeTask = TestResultsXMLFileWriter.StartXMLWriteTask(timeout);
 IPTestOrchestrator.CreateAndRunIPTests(timeout, ipAddresses);
 writeTask.Wait();
 
