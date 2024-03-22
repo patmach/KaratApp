@@ -15,7 +15,7 @@ namespace KaratApp
 {
     internal static class TestResultsXMLFileWriter
     {
-        private static string path = "Results.xml";
+        internal static string path = "Results.xml";
         private static Queue<IPAddressTest> IPAddressTestResultQueue = new Queue<IPAddressTest>();
         private static StreamWriter testResultsXMLStreamWriter;
 
@@ -62,28 +62,21 @@ namespace KaratApp
 
         internal static void WriteTestsToXML(int timeoutInSeconds)
         {
-            try 
-            { 
-                DateTime start = DateTime.Now;
-                IPAddressTest? testResult = new IPAddressTest();
-                while (start.AddSeconds(timeoutInSeconds) > DateTime.Now) {
-                    lock (IPAddressTestResultQueue)
-                    {
-                        if (!IPAddressTestResultQueue.TryDequeue(out testResult)) {
-                            Monitor.Wait(IPAddressTestResultQueue);
-                            testResult = null;
-                        }
+            DateTime start = DateTime.Now;
+            IPAddressTest? testResult = new IPAddressTest();
+            while (start.AddSeconds(timeoutInSeconds) > DateTime.Now) {
+                lock (IPAddressTestResultQueue)
+                {
+                    if (!IPAddressTestResultQueue.TryDequeue(out testResult)) {
+                        Monitor.Wait(IPAddressTestResultQueue);
+                        testResult = null;
                     }
-                    if (testResult != null)
-                        WriteTest(testResult);
                 }
-                WriteFileEnd();
-                testResultsXMLStreamWriter.Close();
+                if (testResult != null)
+                    WriteTest(testResult);
             }
-            catch (Exception ex)
-            {
-                var debug = 1;
-            }
+            WriteFileEnd();
+            testResultsXMLStreamWriter.Close();
         }
 
         private static void WriteTest(IPAddressTest ipAddressTest)

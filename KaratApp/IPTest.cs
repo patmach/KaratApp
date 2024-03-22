@@ -26,7 +26,8 @@ namespace KaratApp
         {
             bool parsed = IPAddress.TryParse(ipAddress, out this.ipAddress);
             if (!parsed)
-                Console.WriteLine($"{ipAddress} cannot be intepreted as a IP Address, so no test will be run on this IP address.\n");
+                Console.WriteLine($"{ipAddress} cannot be intepreted as an IP Address," +
+                    $"so no test will be run on this IP address.\n");
             
         }
 
@@ -38,19 +39,18 @@ namespace KaratApp
             timer.Elapsed += async (sender, e) => await Test();
             timer.Start();
             stopTimerResetEvent.Wait();
-            stopTimerResetEvent.Dispose();
             timer.Stop();
+            stopTimerResetEvent.Dispose();            
             return;
         }
 
 
         private async Task Test()
         {
-            if (DateTime.Now > start.AddSeconds(testTimeInSeconds))
-                stopTimerResetEvent.Set();
-            else
+            if (DateTime.Now < start.AddSeconds(testTimeInSeconds))
                 PingIPAddress();
-          
+            else
+                stopTimerResetEvent.Set();
 
         }
 
@@ -63,7 +63,6 @@ namespace KaratApp
             if (reply.Status == IPStatus.Success)
                 success = true;
             TestResultsXMLFileWriter.AddTestToWriteQueue(ipAddress.ToString(), requestTime, success);
-            Console.WriteLine($"{DateTime.Now.ToString("hh.mm.ss.ffffff")}.....{ipAddress}: {success}"); //DELETE
         }
     }
 }

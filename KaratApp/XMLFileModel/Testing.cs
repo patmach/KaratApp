@@ -8,7 +8,7 @@ using System.Xml.Serialization;
 namespace KaratApp.Model
 {
     [Serializable()]
-    public class Testing
+    public sealed class Testing
     {
         [XmlArray("IPAddressTests")]
         [XmlArrayItem("IPAddressTest", typeof(IPAddressTest))]

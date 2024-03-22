@@ -2,7 +2,6 @@
 using KaratApp;
 using System.Diagnostics;
 
-Console.WriteLine("Starting...");
 int timeout = 0;
 string usageMessage = "This application must be run with these arguments:" +
     " [number of seconds the test will run]" +
@@ -20,8 +19,10 @@ if (!int.TryParse(args[0], out timeout))
     Console.WriteLine(usageMessage);
     return;
 }
-Task writeTask =TestResultsXMLFileWriter.StartXMLWriteTask(args[1..], timeout);
-IPTestOrchestrator.CreateAndRunIPTests(timeout, args[1..]);
+string[] ipAddresses = args[1..];
+Task writeTask =TestResultsXMLFileWriter.StartXMLWriteTask(ipAddresses, timeout);
+IPTestOrchestrator.CreateAndRunIPTests(timeout, ipAddresses);
 writeTask.Wait();
+AvailabilityStatsRetriever.RetrieveAndPrint(ipAddresses, TestResultsXMLFileWriter.path);
 
 
