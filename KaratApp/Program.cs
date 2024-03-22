@@ -20,9 +20,8 @@ if (!int.TryParse(args[0], out timeout))
     Console.WriteLine(usageMessage);
     return;
 }
-Task writeTask =TestResultsXMLFileSerializer.StartXMLWriteTask(args[1..], timeout);
+Task writeTask =TestResultsXMLFileWriter.StartXMLWriteTask(args[1..], timeout);
 IPTestOrchestrator.CreateAndRunIPTests(timeout, args[1..]);
-var xtask = writeTask.ContinueWith(task => { int debug = 1; });
-xtask.Wait();
+writeTask.Wait();
 
 

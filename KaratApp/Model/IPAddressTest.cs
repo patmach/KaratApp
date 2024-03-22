@@ -14,18 +14,31 @@ namespace KaratApp.Model
         [XmlElement("IPAddress")]
         public string IPAddress { get; set; }
 
-        [XmlArray("Tests")]
-        [XmlArrayItem("Test", typeof(TestResult))]
-        public TestResult[] Tests { get; set; }
+        [XmlElement("RequestTime")]
+        public DateTime RequestTime { get; set; }
 
-        public IPAddressTest(string ipAddress, TestResult[] tests) 
+        [XmlElement("Success")]
+        public bool Success { get; set; }
+
+        public IPAddressTest(string ipAddress, DateTime requestTime, bool success)
         {
             this.IPAddress = ipAddress;
-            this.Tests = tests;
+            this.RequestTime = requestTime;
+            this.Success = success;
         }
 
         public IPAddressTest() { }
 
+        public string ToXML()
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.Append($"<{nameof(IPAddressTest)}>");
+            sb.Append($"<{nameof(IPAddress)}>").Append(IPAddress).Append($"</{nameof(IPAddress)}>");
+            sb.Append($"<{nameof(RequestTime)}>").Append(RequestTime.ToString()).Append($"</{nameof(RequestTime)}>");
+            sb.Append($"<{nameof(Success)}>").Append(Success).Append($"</{nameof(Success)}>");
+            sb.Append($"</{nameof(IPAddressTest)}>");
+            return sb.ToString();
+        }
 
     }
 }

@@ -62,7 +62,7 @@ namespace KaratApp
             PingReply reply = pingSender.Send(ipAddress, timeoutInMiliseconds);
             if (reply.Status == IPStatus.Success)
                 success = true;
-            TestResultsXMLFileSerializer.AddTestToWriteQueue(ipAddress.ToString(), requestTime, success);
+            TestResultsXMLFileWriter.AddTestToWriteQueue(ipAddress.ToString(), requestTime, success);
             Console.WriteLine($"{DateTime.Now.ToString("hh.mm.ss.ffffff")}.....{ipAddress}: {success}"); //DELETE
         }
     }
