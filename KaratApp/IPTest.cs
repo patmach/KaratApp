@@ -44,13 +44,13 @@ namespace KaratApp
         }
 
 
-        private Task Test()
+        private async Task Test()
         {
             if (DateTime.Now > start.AddSeconds(testTimeInSeconds))
                 stopTimerResetEvent.Set();
             else
                 PingIPAddress();
-            return Task.CompletedTask;
+          
 
         }
 
@@ -58,10 +58,12 @@ namespace KaratApp
         {
             bool success = false;
             Ping pingSender = new Ping();
+            DateTime requestTime = DateTime.Now;            
             PingReply reply = pingSender.Send(ipAddress, timeoutInMiliseconds);
             if (reply.Status == IPStatus.Success)
                 success = true;
-            Console.WriteLine($"{DateTime.Now.ToString("hh.mm.ss.ffffff")}.....{ipAddress}: {success}");
+            TestResultsXMLFileSerializer.AddTestToWriteQueue(ipAddress.ToString(), requestTime, success);
+            Console.WriteLine($"{DateTime.Now.ToString("hh.mm.ss.ffffff")}.....{ipAddress}: {success}"); //DELETE
         }
     }
 }

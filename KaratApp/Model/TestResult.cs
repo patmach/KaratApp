@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,15 +11,32 @@ namespace KaratApp.Model
     [Serializable()]
     public class TestResult
     {
-        [XmlElement("RequestTime")]
-        public DateTime requestTime { get; set; }
+        [XmlIgnore]
+        public string IPAddress { get; set; }
 
-        [XmlElement("ResponseTime")]
-        public DateTime responseTime { get; set; }
+        [XmlElement("RequestTime")]
+        public DateTime RequestTime { get; set; }
 
         [XmlElement("Success")]
-        public bool success { get; set; }
+        public bool Success { get; set; }
+
+        public TestResult(string ipAddress, DateTime requestTime, bool success) 
+        { 
+            this.IPAddress = ipAddress;
+            this.RequestTime = requestTime;
+            this.Success = success;
+        }
 
         public TestResult() { }
+
+        public string ToXML()
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.Append("<Test>");
+            sb.Append($"<{nameof(RequestTime)}>").Append(RequestTime.ToString()).Append($"</{nameof(RequestTime)}>");
+            sb.Append($"<{nameof(Success)}>").Append(Success).Append($"</{nameof(Success)}>");
+            sb.Append("</Test>");
+            return sb.ToString();
+        }
     }
 }

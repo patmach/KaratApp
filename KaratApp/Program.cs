@@ -1,5 +1,6 @@
 ﻿// See https://aka.ms/new-console-template for more information
 using KaratApp;
+using System.Diagnostics;
 
 Console.WriteLine("Starting...");
 int timeout = 0;
@@ -19,7 +20,9 @@ if (!int.TryParse(args[0], out timeout))
     Console.WriteLine(usageMessage);
     return;
 }
-TestResultsXMLFileSerializer.StartXMLWriteTask(args[1..]);
+Task writeTask =TestResultsXMLFileSerializer.StartXMLWriteTask(args[1..], timeout);
 IPTestOrchestrator.CreateAndRunIPTests(timeout, args[1..]);
+var xtask = writeTask.ContinueWith(task => { int debug = 1; });
+xtask.Wait();
 
 
